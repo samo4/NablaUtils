@@ -27,7 +27,7 @@ namespace NablaUtils
 		
 		public static Task<TableResult> AddLogMessageAsync(string sub, Microsoft.Extensions.Logging.LogLevel level, Exception ex)
         {   
-            return AddLogMessage(sub, level, $"[{ex.Message}] {ex.StackTrace}");
+            return AddLogMessageAsync(sub, level, $"[{ex.Message}] {ex.StackTrace}");
         }
 
         public static async Task<TableResult> AddLogMessageAsync(string sub, Microsoft.Extensions.Logging.LogLevel level, string message)
