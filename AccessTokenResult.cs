@@ -43,21 +43,33 @@ namespace NablaUtils
         public AccessTokenStatus Status { get; private set; }
         public Exception Exception { get; private set; }
 
-        public StatusCodeResult HttpResult
+        public ObjectResult HttpResult
         {
             get
             {
-                switch (Status)
+                ObjectResult result;
+                if (IsValid) { result = new OkObjectResult(new { status = "ok", message = "Authenticated." }); }
+                else
                 {
-                    case AccessTokenStatus.Error:
-                        return new StatusCodeResult(500);
-                    case AccessTokenStatus.NoToken:
-                        return new StatusCodeResult(403); // Forbidden
-                    case AccessTokenStatus.Expired:
-                        return new StatusCodeResult(401); // Unauthorized
-                    default:
-                        return null;
+                    result = new ObjectResult(new { status = "error", message = Status.ToString() });
+                    switch (Status)
+                    {
+                        case AccessTokenStatus.Error:
+                            result = new ObjectResult(new { status = "error", message = Exception.Message, stackTrace = Exception.StackTrace });
+                            result.StatusCode = 500;
+                            break;
+                        case AccessTokenStatus.NoToken:
+                            result.StatusCode = 403;
+                            break;
+                        case AccessTokenStatus.Expired:
+                            result.StatusCode = 401;
+                            break;
+                        default:
+                            result.StatusCode = 200;
+                            break;
+                    }
                 }
+                return result;
             }
         }
 
