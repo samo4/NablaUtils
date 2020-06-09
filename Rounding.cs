@@ -36,10 +36,28 @@ namespace NablaUtils
             }
         }
 
+        public static double? RoundDown(this double? input, int places)
+        {
+            if (!input.HasValue)
+            {
+                return null;
+            }
+            else
+            {
+                return RoundDown(input.Value, places);
+            }
+        }
+
         public static double RoundUp(this double input, int places)
         {
             double multiplier = Math.Pow(10, Convert.ToDouble(places));
             return Math.Ceiling(input * multiplier) / multiplier;
+        }
+
+        public static double RoundDown(this double input, int places)
+        {
+            double multiplier = Math.Pow(10, Convert.ToDouble(places));
+            return Math.Floor(input * multiplier) / multiplier;
         }
     }
 }
