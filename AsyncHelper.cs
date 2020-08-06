@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 
-namespace IceSync.NablaUtils
+namespace NablaUtils
 {
     public static class AsyncHelper
     {
