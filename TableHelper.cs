@@ -61,5 +61,23 @@ namespace DoubleUpFxApi.NablaUtils
             } while (continuationToken != null);
             return result;
         }
+
+        public static async Task<List<T>> GetAllAsync<T>(this CloudTable _table, int? takeCount = null) where T : ITableEntity, new()
+        {
+            var result = new List<T>();
+            var query = new TableQuery<T>();
+            if (takeCount.HasValue)
+            {
+                query.TakeCount = takeCount.Value;
+            }
+            TableContinuationToken continuationToken = null;
+            do
+            {
+                var response = await _table.ExecuteQuerySegmentedAsync(query, continuationToken);
+                continuationToken = response.ContinuationToken;
+                result.AddRange(response.Results);
+            } while (continuationToken != null);
+            return result;
+        }
     }
 }
