@@ -27,17 +27,22 @@ namespace NablaUtils
         {
             get
             {
-                if (Principal == null || Principal.Claims == null)
-                {
-                    return null;
-                }
-                var nameIdentifier = Principal.Claims.Where(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
-                if (nameIdentifier == null || nameIdentifier.Count() < 1)
-                {
-                    return null;
-                }
-                return nameIdentifier.Select(c => c.Value).FirstOrDefault();
+                return GetClaim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
             }
+        }
+
+        public string GetClaim(string type)
+        {
+            if (Principal == null || Principal.Claims == null)
+            {
+                return null;
+            }
+            var nameIdentifier = Principal.Claims.Where(c => c.Type == type);
+            if (nameIdentifier == null || nameIdentifier.Count() < 1)
+            {
+                return null;
+            }
+            return nameIdentifier.Select(c => c.Value).FirstOrDefault();
         }
 
         public AccessTokenStatus Status { get; private set; }
