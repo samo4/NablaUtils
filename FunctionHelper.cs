@@ -17,7 +17,7 @@ namespace NablaUtils
         {
             string conStr = Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.Process);
             if (string.IsNullOrEmpty(conStr))
-                conStr = System.Environment.GetEnvironmentVariable($"CUSTOMCONNSTR_{name}", EnvironmentVariableTarget.Process);
+                 conStr = System.Environment.GetEnvironmentVariable($"CUSTOMCONNSTR_{name}", EnvironmentVariableTarget.Process);
 
             if (string.IsNullOrWhiteSpace(conStr))
             {
