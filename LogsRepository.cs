@@ -20,9 +20,9 @@ namespace NablaUtils
             LogTable = _tableClient.GetTableReference("log");
         }
 
-        public static async Task EnsureDatabaseSchemaAsync()
+        public static async Task<bool> EnsureDatabaseSchemaAsync()
         {
-            await LogTable.CreateIfNotExistsAsync();
+            return await LogTable.CreateIfNotExistsAsync();
         }
 		
 		public static Task<TableResult> AddLogMessageAsync(string sub, Microsoft.Extensions.Logging.LogLevel level, Exception ex)
