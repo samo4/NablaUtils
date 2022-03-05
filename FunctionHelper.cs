@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -13,6 +13,49 @@ namespace NablaUtils
 {
     public static class FunctionHelper
     {
+
+        /*
+        Original source https://github.com/Azure/Azure-Functions/issues/717#issuecomment-400098791
+        https://blog.torib.io/2020/03/03/getting-azure-function-connection-strings-from-configurations/
+        */
+
+        public static string GetSqlConnectionString(string name)
+        {
+            string conStr = System.Environment.GetEnvironmentVariable($"ConnectionStrings:{name}", EnvironmentVariableTarget.Process);
+            if (string.IsNullOrEmpty(conStr)) // Azure Functions App Service naming convention
+                conStr = System.Environment.GetEnvironmentVariable($"SQLCONNSTR_{name}", EnvironmentVariableTarget.Process);
+
+            if (string.IsNullOrWhiteSpace(conStr))
+            {
+                throw new Exception("Empty connection string from Environment!");
+            }
+            return conStr;
+        }
+        public static string GetSqlAzureConnectionString(string name)
+        {
+            string conStr = System.Environment.GetEnvironmentVariable($"ConnectionStrings:{name}", EnvironmentVariableTarget.Process);
+            if (string.IsNullOrEmpty(conStr)) // Azure Functions App Service naming convention
+                conStr = System.Environment.GetEnvironmentVariable($"SQLAZURECONNSTR_{name}", EnvironmentVariableTarget.Process);
+            return conStr;
+        }
+        public static string GetMySqlConnectionString(string name)
+        {
+            string conStr = System.Environment.GetEnvironmentVariable($"ConnectionStrings:{name}", EnvironmentVariableTarget.Process);
+            if (string.IsNullOrEmpty(conStr)) // Azure Functions App Service naming convention
+                conStr = System.Environment.GetEnvironmentVariable($"MYSQLCONNSTR_{name}", EnvironmentVariableTarget.Process);
+            return conStr;
+        }
+        public static string GetCustomConnectionString(string name)
+        {
+            string conStr = System.Environment.GetEnvironmentVariable($"ConnectionStrings:{name}", EnvironmentVariableTarget.Process);
+            if (string.IsNullOrEmpty(conStr)) // Azure Functions App Service naming convention
+                conStr = System.Environment.GetEnvironmentVariable($"CUSTOMCONNSTR_{name}", EnvironmentVariableTarget.Process);
+            return conStr;
+        }
+        /* end */
+
+
+
         public static string GetAutoUsersConnectionString(string name)
         {
             string conStr = Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.Process);
@@ -56,7 +99,7 @@ namespace NablaUtils
         {
             return (int) result >= 200 && (int) result < 300;
         }
-		
+
 		public static long GetCurrentTimeStamp(int roundtoMinutes)
         {
             var tsNow = (double)new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds();
