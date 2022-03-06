@@ -3,12 +3,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Auth0.AuthenticationApi;
-using Auth0.AuthenticationApi.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Microsoft.IdentityModel.Tokens;
+
 
 namespace NablaUtils
 {
@@ -24,17 +23,13 @@ namespace NablaUtils
 
         static AccessTokenProvider()
         {
-            /*_issuerToken = issuerToken;
-            _audience = audience;
-            _issuer = issuer;*/
-            var domain = Environment.GetEnvironmentVariable("DOMAIN");
-            var issuer = $"https://{domain}/";
+            // https://nablatest.b2clogin.com/nablatest.onmicrosoft.com/b2c_1_signupsignin2/v2.0/
+            var issuerConfigurationUrl = Environment.GetEnvironmentVariable("ISSUER_CONFIGURATION_URL"); 
 
             var documentRetriever = new HttpDocumentRetriever();
-            documentRetriever.RequireHttps = issuer.StartsWith("https://");
+            documentRetriever.RequireHttps = issuerConfigurationUrl.StartsWith("https://");
 
-            _configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(
-                $"{issuer}.well-known/openid-configuration",
+            _configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>($"{issuerConfigurationUrl}.well-known/openid-configuration",
                 new OpenIdConnectConfigurationRetriever(),
                 documentRetriever
             );
@@ -58,9 +53,12 @@ namespace NablaUtils
         public static async Task<AccessTokenResult> ValidateTokenAsync(HttpRequest request)
         {
             var config = await _configurationManager.GetConfigurationAsync(CancellationToken.None);
-            var domain = Environment.GetEnvironmentVariable("DOMAIN");
-            var issuer = $"https://{domain}/";
-            var audience = Environment.GetEnvironmentVariable("AUDIENCE");
+
+            // "iss" in token payload; example "https://nablatest.b2clogin.com/4c889235-310d-4427-869d-f0ff9997e849/v2.0/";
+            var issuer = Environment.GetEnvironmentVariable("ISSUER");
+
+            // "aud" in token payload; got CLIENT_ID in mine
+            var audience = Environment.GetEnvironmentVariable("AUDIENCE"); 
 
             try
             {
@@ -100,6 +98,7 @@ namespace NablaUtils
             }
         }
 
+        /*
         public static async Task<UserInfo> GetUserInfoAsync(HttpRequest req)
         {
             var domain = Environment.GetEnvironmentVariable("DOMAIN");
@@ -107,6 +106,6 @@ namespace NablaUtils
             var token = ExtractTokenFromRequest(req);
             var userInfo = await apiClient.GetUserInfoAsync(token);
             return userInfo;
-        }
+        }*/
     }
 }
