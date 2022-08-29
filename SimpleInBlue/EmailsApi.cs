@@ -44,6 +44,11 @@ namespace SummerBack.NablaUtils.SimpleInBlue
                 message.To = message.To.Where(to => allowedRecipients.Where(ar => to.Email.EndsWith(ar.Trim())).Any()).ToList();
             }
 
+            if (message.To.Count == 0)
+            {
+                throw new EmailsApiException("nothing_to_send", "No recipients. Were they all removed by ALLOWED_RECIPIENTS");
+            }
+
             var json = JsonConvert.SerializeObject(message);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
