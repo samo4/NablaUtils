@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Sentry;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -104,6 +106,12 @@ namespace NablaUtils
         {
             var tsNow = (double)new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds();
             return (long)Math.Floor(tsNow / (roundtoMinutes * 60)) * (roundtoMinutes * 60);
+        }
+
+        public static BadRequestObjectResult ReturnErrorResponse(Exception ex)
+        {
+            SentrySdk.CaptureException(ex);
+            return new BadRequestObjectResult(new { status = "error", message = ex.Message, stackTrace = ex.StackTrace });
         }
     }
 }
