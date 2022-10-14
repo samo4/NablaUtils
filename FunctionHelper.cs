@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -108,10 +109,15 @@ namespace NablaUtils
             return (long)Math.Floor(tsNow / (roundtoMinutes * 60)) * (roundtoMinutes * 60);
         }
 
-        public static BadRequestObjectResult ReturnErrorResponse(Exception ex)
+        public static ObjectResult ReturnErrorResponse(Exception ex)
         {
             SentrySdk.CaptureException(ex);
-            return new BadRequestObjectResult(new { status = "error", message = ex.Message, stackTrace = ex.StackTrace });
+            var result = new BadRequestObjectResult(new { status = "error", message = ex.Message, stackTrace = ex.StackTrace });
+            if (ex is SecurityException)
+            {
+                result.StatusCode = 403;
+            }
+            return result;
         }
     }
 }
