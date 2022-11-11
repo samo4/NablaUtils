@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 using Sentry;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Security;
@@ -118,6 +119,52 @@ namespace NablaUtils
                 result.StatusCode = 403;
             }
             return result;
+        }
+
+        public static DateTimeOffset GetDateTimeOffsetFromRequest(this HttpRequest req, string name)
+        {
+            var result = DateTimeOffset.MinValue;
+            if (!req.Query.ContainsKey(name))
+            {
+                return result;
+            }
+            if (DateTimeOffset.TryParseExact(req.Query[name], "yyyy-MM-ddTHH:mm", CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AssumeUniversal, out result))
+            {
+                return result;
+            }
+            if (DateTimeOffset.TryParseExact(req.Query[name], "yyyy-MM-dd", CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AssumeUniversal, out result))
+            {
+                return result;
+            }
+            throw new ArgumentException(name);
+        }
+
+        public static bool TryGetParameterFromRequest(this HttpRequest req, string name, out DateTimeOffset result)
+        {
+            result = DateTimeOffset.MinValue;
+            if (!req.Query.ContainsKey(name))
+            {
+                return false;
+            }
+            if (DateTimeOffset.TryParseExact(req.Query[name], "yyyy-MM-ddTHH:mm", CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AssumeUniversal, out result))
+            {
+                return true;
+            }
+            if (DateTimeOffset.TryParseExact(req.Query[name], "yyyy-MM-dd", CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AssumeUniversal, out result))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool TryGetParameterFromRequest(this HttpRequest req, string name, out Guid result)
+        {
+            result = Guid.Empty;
+            if (!req.Query.ContainsKey(name))
+            {
+                return false;
+            }
+            return Guid.TryParse(req.Query[name], out result);
         }
     }
 }
