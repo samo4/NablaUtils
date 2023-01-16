@@ -166,5 +166,15 @@ namespace NablaUtils
             }
             return Guid.TryParse(req.Query[name], out result);
         }
+
+        public static bool GetBoolFromRequest(this HttpRequest req, string name, out bool result)
+        {
+            result = false;
+            if (!req.Query.ContainsKey(name))
+            {
+                return false;
+            }
+            return bool.TryParse(req.Query[name], out result);
+        }
     }
 }
