@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SummerBack.NablaUtils.SimpleInBlue
+namespace NablaUtils.SimpleInBlue
 {
     internal record EmailsApiError
     {

@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SummerBack.NablaUtils
+namespace NablaUtils
 {
     public record EmailAddress
     {

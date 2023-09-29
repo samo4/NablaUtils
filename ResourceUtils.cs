@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SummerBack.NablaUtils
+namespace NablaUtils
 {
     public class ResourceUtils
     {

@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SummerBack.NablaUtils.SimpleInBlue
+namespace NablaUtils.SimpleInBlue
 {
     public class EmailsApi : ITransactionalEmailApi
     {
