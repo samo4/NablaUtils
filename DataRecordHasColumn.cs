@@ -9,6 +9,20 @@ namespace NablaUtils
 {
     public static class DataRecordHasColumn
     {
+        //public static bool HasColumn(this IDataRecord r, string columnName)
+        //{
+        //    try
+        //    {
+        //        return r.GetOrdinal(columnName) >= 0;
+        //    }
+        //    catch (IndexOutOfRangeException)
+        //    {
+        //        return false;
+        //    }
+        //}
+
+        // which is better?
+
         public static bool HasColumn(this IDataRecord dr, string columnName)
         {
             for (int i = 0; i < dr.FieldCount; i++)
