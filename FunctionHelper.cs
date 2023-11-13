@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -110,8 +111,9 @@ namespace NablaUtils
             return (long)Math.Floor(tsNow / (roundtoMinutes * 60)) * (roundtoMinutes * 60);
         }
 
-        public static ObjectResult ReturnErrorResponse(Exception ex)
+        public static ObjectResult ReturnErrorResponse(ILogger log, Exception ex)
         {
+            log.LogError(ex, "ReturnErrorResponse");
             SentrySdk.CaptureException(ex);
             var result = new BadRequestObjectResult(new { status = "error", message = ex.Message, stackTrace = ex.StackTrace });
             if (ex is SecurityException)
