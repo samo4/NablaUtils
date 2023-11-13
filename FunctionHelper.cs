@@ -111,9 +111,12 @@ namespace NablaUtils
             return (long)Math.Floor(tsNow / (roundtoMinutes * 60)) * (roundtoMinutes * 60);
         }
 
-        public static ObjectResult ReturnErrorResponse(ILogger log, Exception ex)
+        public static ObjectResult ReturnErrorResponse(Exception ex, ILogger log = null)
         {
-            log.LogError(ex, "ReturnErrorResponse");
+            if (log != null)
+            {
+                log.LogError(ex, "ReturnErrorResponse");
+            }
             SentrySdk.CaptureException(ex);
             var result = new BadRequestObjectResult(new { status = "error", message = ex.Message, stackTrace = ex.StackTrace });
             if (ex is SecurityException)
