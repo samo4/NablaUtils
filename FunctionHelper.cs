@@ -6,8 +6,10 @@ using Newtonsoft.Json.Linq;
 using Sentry;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Security;
 using System.Text;
@@ -15,6 +17,38 @@ using System.Threading.Tasks;
 
 namespace NablaUtils
 {
+    public record UpdateResponse
+    {
+        public string Status { get; init; }
+    }
+
+    public record DeleteResponse
+    {
+        public string Status { get; init; }
+    }
+
+    public record InsertResponse
+    {
+        public string Status { get; init; }
+        public Guid InsertedId { get; init; }
+        public int InsertedCount { get; init; }
+        public int FailedCount { get; init; } = 0;
+    }
+
+    public record ExceptionResponse
+    {
+        public string Status { get; init; }
+        public string Message { get; init; }
+        public string StackTrace { get; init; }
+    }
+
+    public record ValidationResponse
+    {
+        public string Status { get; init; }
+        public string Message { get; init; }
+        public IEnumerable<ValidationResult> InvalidProperties { get; init; }
+    }
+
     public static class FunctionHelper
     {
 
@@ -110,10 +144,15 @@ namespace NablaUtils
             return (long)Math.Floor(tsNow / (roundtoMinutes * 60)) * (roundtoMinutes * 60);
         }
 
+        public static ObjectResult ReturnValidationResponse(IEnumerable<ValidationResult> validationResults)
+        {
+            return new ObjectResult(new ValidationResponse { Status = "error", Message = "Body validation failed.", InvalidProperties = validationResults.ToArray() }) { StatusCode = 422 };
+        }
+
         public static ObjectResult ReturnErrorResponse(Exception ex)
         {
             SentrySdk.CaptureException(ex);
-            var result = new BadRequestObjectResult(new { status = "error", message = ex.Message, stackTrace = ex.StackTrace });
+            var result = new BadRequestObjectResult(new ExceptionResponse { Status = "error", Message = ex.Message, StackTrace = ex.StackTrace });
             if (ex is SecurityException)
             {
                 result.StatusCode = 403;
