@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -149,8 +150,12 @@ namespace NablaUtils
             return new ObjectResult(new ValidationResponse { Status = "error", Message = "Body validation failed.", InvalidProperties = validationResults.ToArray() }) { StatusCode = 422 };
         }
 
-        public static ObjectResult ReturnErrorResponse(Exception ex)
+        public static ObjectResult ReturnErrorResponse(Exception ex, ILogger log = null)
         {
+            if (log != null)
+            {
+                log.LogError(ex, "ReturnErrorResponse");
+            }
             SentrySdk.CaptureException(ex);
             var result = new BadRequestObjectResult(new ExceptionResponse { Status = "error", Message = ex.Message, StackTrace = ex.StackTrace });
             if (ex is SecurityException)
